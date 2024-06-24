@@ -1,0 +1,43 @@
+class KnowledgeBase:
+    def _init_(self):
+        self.facts = set()
+        self.rules = {}
+
+    def add_fact(self, fact):
+        self.facts.add(fact)
+
+    def add_rule(self, consequent, antecedents):
+        self.rules[consequent] = antecedents
+
+    def forward_chaining(self, goal):
+        agenda = list(self.facts)
+        inferred = set()
+
+        while agenda:
+            current_fact = agenda.pop(0)
+
+            if current_fact == goal:
+                print(f"Goal '{goal}' is inferred.")
+                return True
+
+            if current_fact in inferred:
+                continue
+
+            if current_fact in self.rules:
+                antecedents = self.rules[current_fact]
+                if all(antecedent in inferred for antecedent in antecedents):
+                    inferred.add(current_fact)
+                    agenda.append(current_fact)
+
+        print(f"Goal '{goal}' cannot be inferred.")
+        return False
+
+# Example usage
+kb = KnowledgeBase()
+kb.add_fact("A")
+kb.add_fact("B")
+kb.add_rule("C", ["A", "B"])
+kb.add_rule("D", ["C"])
+kb.add_rule("E", ["D"])
+
+kb.forward_chaining("E")
